@@ -1,26 +1,360 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Mad Monkey core brand tokens, verbatim from design.madmonkeyhostels.com/tokens.json */
+@theme {
+  --color-ink: #0a0a0a;
+  --color-bone: #f5efe2;
+  --color-paper: #ffffff;
+  --color-lime: #ccff01;
+  --color-orange: #ff6600;
+  --color-green: #03ff01;
+  --color-yellow: #ffc000;
+  --color-pink: #ff01aa;
+  --color-cyan: #00fef3;
+  --color-purple: #ab00ff;
+  --color-blue: #0081f7;
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
+  --font-sticker: var(--font-bungee), var(--font-montserrat), sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-ink);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .display {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+  }
+  /* Headline size that never runs off a 375px phone. */
+  .hero {
+    font-size: clamp(2.25rem, 13vw, 3.6rem);
+  }
+  .eyebrow {
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* Buttons: sharp or pill, never in between. Hard shadow, no blur. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    border: 3px solid var(--color-ink);
+    padding: 0.95rem 1.25rem;
+    transition: transform 80ms, box-shadow 80ms;
+    cursor: pointer;
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .btn-lime {
+    background: var(--color-lime);
+    color: var(--color-ink);
+    box-shadow: 6px 6px 0 0 var(--color-orange);
+  }
+  .btn-lime:not(:disabled):hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 0 var(--color-orange);
+  }
+  .btn-lime:not(:disabled):active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 0 var(--color-orange);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-bone);
+    border-color: var(--color-bone);
+  }
+  .btn-outline:hover {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .btn-sm {
+    padding: 0.55rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .card {
+    background: var(--color-bone);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    box-shadow: 8px 8px 0 0 var(--color-lime);
+  }
+  .panel {
+    border: 3px solid var(--color-bone);
+  }
+
+  .field {
+    width: 100%;
+    background: var(--color-ink);
+    color: var(--color-bone);
+    border: 3px solid var(--color-bone);
+    border-radius: 0;
+    padding: 0.8rem 0.9rem;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-lime);
+    box-shadow: 4px 4px 0 0 var(--color-lime);
+  }
+  .field::placeholder {
+    color: #8a857b;
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--color-orange);
+  }
+  .card .field {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+
+  .check {
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border: 3px solid var(--color-bone);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+  }
+  .check:checked {
+    background: var(--color-lime);
+    border-color: var(--color-lime);
+  }
+  .check:checked::after {
+    content: "";
+    width: 12px;
+    height: 7px;
+    border-left: 3px solid var(--color-ink);
+    border-bottom: 3px solid var(--color-ink);
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+  .check:focus-visible {
+    outline: 3px solid var(--color-lime);
+    outline-offset: 2px;
+  }
+
+  /* Split-flap digit on the spots board. Remounts on change, so it flips. */
+  .flap {
+    position: relative;
+    display: inline-grid;
+    place-content: center;
+    width: 0.74em;
+    height: 1.04em;
+    background: var(--color-ink);
+    color: var(--color-lime);
+    font-weight: 900;
+    line-height: 1;
+    transform-origin: 50% 0;
+    animation: flap-in 150ms ease-out;
+  }
+  .flap::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 3px;
+    margin-top: -1.5px;
+    background: var(--color-bone);
+  }
+
+  /* One square per spot. Gone ones are crossed off. */
+  .spot {
+    position: relative;
+    aspect-ratio: 1;
+    border: 2px solid var(--color-ink);
+    transition: background-color 160ms;
+  }
+  .spot-off {
+    animation: stamp 220ms ease-out;
+  }
+  .spot-off::before,
+  .spot-off::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    background: var(--color-ink);
+    transform: rotate(45deg);
+  }
+  .spot-off::after {
+    transform: rotate(-45deg);
+  }
+
+  /* Bone sections: the warm canvas, with the design system's dot grid. */
+  .on-bone {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .dots {
+    background-image: radial-gradient(rgba(10, 10, 10, 0.13) 1.3px, transparent 1.4px);
+    background-size: 18px 18px;
+  }
+  .on-bone .field {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  .on-bone .field:focus {
+    border-color: var(--color-ink);
+    box-shadow: 5px 5px 0 0 var(--color-pink);
+  }
+  .on-bone .check {
+    border-color: var(--color-ink);
+    background: var(--color-paper);
+  }
+  .on-bone .check:checked {
+    background: var(--color-lime);
+  }
+
+  /* Sunburst rays behind the hero, as on the design system's own cover. */
+  .rays {
+    background-color: var(--color-ink);
+    background-image: repeating-conic-gradient(from 0deg at 50% 115%, #0a0a0a 0deg 7deg, #161616 7deg 14deg);
+  }
+
+  /* Speech-bubble pill: friendly micro-copy, 3px outline, no shadow. */
+  .bubble {
+    display: inline-block;
+    border: 3px solid var(--color-ink);
+    border-radius: 9999px;
+    padding: 0.45rem 1rem;
+    font-weight: 800;
+    color: var(--color-ink);
+    transform: rotate(-3deg);
+  }
+
+  /* Hard-shadow card on a light canvas. */
+  .tile {
+    border: 3px solid var(--color-ink);
+    box-shadow: 8px 8px 0 0 var(--color-ink);
+  }
+
+  /* Polaroid photo: the only place a soft shadow is allowed. */
+  .polaroid {
+    background: var(--color-paper);
+    padding: 8px 8px 30px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 22s linear infinite;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The ALL IN sticker: slab on Mad Black, hard paper shadow, rotated -4deg. */
+  .sticker {
+    display: inline-block;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 3px solid var(--color-paper);
+    box-shadow: 5px 5px 0 0 var(--color-paper);
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes flap-in {
+  from {
+    transform: perspective(300px) rotateX(-85deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes stamp {
+  from {
+    transform: scale(1.4);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(-10deg) scale(1);
+  }
+  50% {
+    transform: rotate(-4deg) scale(1.06);
+  }
+}
+
+.wobble {
+  animation: wobble 2.6s ease-in-out infinite;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(720deg);
+    opacity: 1;
+  }
+}
+
+.confetti {
+  animation: confetti-fall 2.8s cubic-bezier(0.25, 0.6, 0.5, 1) forwards;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .flap,
+  .spot-off,
+  .marquee-track,
+  .wobble {
+    animation: none;
+  }
+  .spot {
+    transition: none;
+  }
 }

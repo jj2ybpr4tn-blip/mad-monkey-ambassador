@@ -1,0 +1,165 @@
+// Concept database. SQLite for the demo; switch the provider to "postgresql"
+// and point DATABASE_URL at Postgres for production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model University {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  ambassadorName  String?
+  destination     String
+  // Which itinerary to show. Blank means "use the destination", which is what
+  // most unis want; set it when two unis run their own version of one trip.
+  itineraryKey    String?
+  route           String // comma-separated stops, e.g. "Phnom Penh,Siem Reap"
+  days            Int
+  departureDate   DateTime
+  returnDate      DateTime?
+  pricePence      Int
+  softCap         Int
+  hardCap         Int
+  hardCapReleased Boolean   @default(false)
+  flightsIncluded Boolean   @default(false)
+  isLive          Boolean   @default(true)
+  entrants        Entrant[]
+  draws           Draw[]
+  bookings        Booking[]
+}
+
+model Entrant {
+  id               String    @id @default(cuid())
+  token            String    @unique // private link to their own page
+  // Giveaway entrants give a WhatsApp number only. Names come from their WhatsApp
+  // profile when they verify; email from trip bookings.
+  firstName        String?
+  lastName         String?
+  email            String?
+  emailNormalised  String?
+  emailConfirmedAt DateTime?
+  whatsapp         String?
+  universityId     String
+  university       University @relation(fields: [universityId], references: [id])
+  whatsappVerifiedAt  DateTime?
+  instagramHandle  String? // null for people who only booked the trip
+  instagramVerifiedAt DateTime?
+  // In the giveaway draws once email, WhatsApp and Instagram are all verified.
+  enteredAt        DateTime?
+  yearOfStudy      String? // "1" | "2" | "3+"
+  declaredFollow   Boolean   @default(false)
+  marketingConsent Boolean   @default(false) // email
+  whatsappConsent  Boolean   @default(false)
+  over18           Boolean
+  source           String? // which QR poster or story they came from, e.g. "library"
+  confirmToken     String?   @unique // only ever sent by email; cleared once used
+  verifyCode       String? // sent back to us on WhatsApp and Instagram to prove both are theirs
+  referralCode     String?   @unique // issued once fully verified, or on booking
+  referredById     String?
+  referredBy       Entrant?  @relation("ReferredBy", fields: [referredById], references: [id])
+  referred         Entrant[] @relation("ReferredBy")
+  followVerified   Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  ip               String?
+  userAgent        String?
+  entries          Entry[]
+  referralsMade    Referral[] @relation("Referrer")
+  referralsIn      Referral[] @relation("Referee")
+  bookings         Booking[]
+
+  @@index([emailNormalised])
+}
+
+// A ledger, not a running total: every entry has a source and can be voided.
+// "verified" and "follow" are standing entries: they count in every draw.
+// "referral" and "story" are earned: they count in the month and term they were earned.
+model Entry {
+  id        String    @id @default(cuid())
+  entrantId String
+  entrant   Entrant   @relation(fields: [entrantId], references: [id])
+  source    String // verified | follow | referral | story
+  count     Int
+  drawMonth String // "2026-10"
+  term      String // "2026-autumn"
+  referralId String?
+  voidedAt  DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Referral {
+  id          String    @id @default(cuid())
+  kind        String // giveaway | trip
+  referrerId  String
+  referrer    Entrant   @relation("Referrer", fields: [referrerId], references: [id])
+  refereeId   String
+  referee     Entrant   @relation("Referee", fields: [refereeId], references: [id])
+  status      String    @default("pending") // pending | confirmed | voided
+  confirmedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([kind, refereeId])
+}
+
+model Draw {
+  id               String      @id @default(cuid())
+  kind             String // monthly (7 free nights) | termly (free trip)
+  period           String // "2026-10" or "2026-autumn"
+  universityId     String? // null: one draw across every uni
+  university       University? @relation(fields: [universityId], references: [id])
+  prize            String
+  seed             String
+  entrantSnapshot  String // JSON: [{id, name, entries}]
+  winnerId         String
+  verifiedAt       DateTime?
+  status           String     @default("drawn") // drawn | verified | voided
+  createdAt        DateTime   @default(now())
+}
+
+model Booking {
+  id                   String     @id @default(cuid())
+  entrantId            String
+  entrant              Entrant    @relation(fields: [entrantId], references: [id])
+  universityId         String
+  university           University @relation(fields: [universityId], references: [id])
+  plan                 String // full | monthly | weekly
+  totalPence           Int
+  depositPaidAt        DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String     @default("pending") // pending | active | refunded
+  referredByBookingId  String?
+  friendDiscountPence  Int        @default(0)
+  referrerDiscountPence Int       @default(0)
+  createdAt            DateTime   @default(now())
+  payments             Payment[]
+}
+
+model Payment {
+  id                    String    @id @default(cuid())
+  bookingId             String
+  booking               Booking   @relation(fields: [bookingId], references: [id])
+  kind                  String // deposit | instalment
+  amountPence           Int
+  dueDate               DateTime
+  paidAt                DateTime?
+  stripePaymentIntentId String?
+  status                String    @default("scheduled") // scheduled | paid | late
+}
+
+// Stubbed messages: every WhatsApp or email the site would send lands here and shows at /demo/inbox.
+model OutboxEmail {
+  id        String   @id @default(cuid())
+  channel   String   @default("email") // whatsapp | email
+  to        String
+  subject   String
+  body      String
+  ctaLabel  String?
+  ctaUrl    String?
+  createdAt DateTime @default(now())
+}
