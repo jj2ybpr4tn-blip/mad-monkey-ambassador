@@ -1,12 +1,13 @@
-// Concept database. SQLite for the demo; switch the provider to "postgresql"
-// and point DATABASE_URL at Postgres for production.
+// Hosted on Postgres. DATABASE_URL comes from the host; locally it is in .env.
+// To run this on a local SQLite file instead, set provider back to "sqlite"
+// and point DATABASE_URL at file:./dev.db.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
