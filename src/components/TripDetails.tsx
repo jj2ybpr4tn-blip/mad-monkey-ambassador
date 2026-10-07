@@ -3,7 +3,7 @@ import type { Itinerary } from "@/lib/itineraries";
 import { Starburst } from "./Starburst";
 
 /** The trip's hero photo as a tilted polaroid, with one starburst carrying the headline perk. */
-export function TripPhoto({ src, alt, caption }: { src: string; alt: string; caption: string }) {
+export function TripPhoto({ src, alt, caption, badge }: { src: string; alt: string; caption: string; badge: Itinerary["badge"] }) {
   return (
     <div className="relative mx-auto w-[88%] max-w-sm">
       <figure className="polaroid -rotate-2">
@@ -12,8 +12,8 @@ export function TripPhoto({ src, alt, caption }: { src: string; alt: string; cap
       </figure>
       <div className="wobble absolute -top-10 -right-5">
         <Starburst size={132} rotate={0}>
-          <span className="font-sticker text-[15px] leading-none normal-case">NESTIVAL</span>
-          <span className="mt-1 block text-[11px] leading-tight">ticket included</span>
+          <span className="font-sticker text-[15px] leading-none normal-case">{badge.word}</span>
+          <span className="mt-1 block text-[11px] leading-tight">{badge.line}</span>
         </Starburst>
       </div>
     </div>

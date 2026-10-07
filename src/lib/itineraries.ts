@@ -19,6 +19,8 @@ export type Itinerary = {
   tripCode: string;
   hero: { src: string; alt: string };
   pitch: string;
+  /** The starburst on the hero photo: this trip's headline perk. */
+  badge: { word: string; line: string };
   vibe: string;
   physical: string;
   stops: { name: string; nights: number }[];
@@ -37,6 +39,7 @@ export const ITINERARIES: Record<string, Itinerary> = {
     hero: { src: `${CDN}/tours/PJDUEJ/1788355594683-3.jpg`, alt: "A big group on the Mad Monkey Siem Reap pub crawl, drinks up under the neon" },
     pitch:
       "Pool parties in Phnom Penh, the messiest pub crawl in Siem Reap, then a week on the islands: boat party, beach raves till sunrise, your own private beach. The temples and the history are in there too, for the mornings you fancy it.",
+    badge: { word: "NESTIVAL", line: "ticket included" },
     vibe: "High energy and social",
     physical: "Light to moderate. Some hangovers, some sunrise raves.",
     stops: [
@@ -95,6 +98,7 @@ export const ITINERARIES: Record<string, Itinerary> = {
     hero: { src: `${CDN}/tours/PSX1UK/1780404760900-3.JPG`, alt: "The Mad Monkey boat party off Gili Trawangan, everyone piled on the deck" },
     pitch:
       "Boat party off Gili T, a foam party with a live DJ, then three days of surf camp in Lombok. Manta rays, island hopping round Nusa Penida and a sunrise hike up Mt Batur in between, for the mornings you want more than a hangover.",
+    badge: { word: "SURF CAMP", line: "3 days, included" },
     vibe: "High energy and social",
     physical: "Light to moderate. Some hangovers, some hikes.",
     stops: [

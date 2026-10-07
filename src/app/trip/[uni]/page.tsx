@@ -73,7 +73,7 @@ export default async function TripPage({ params, searchParams }: { params: Promi
           </p>
           {it && (
             <div className="mt-14">
-              <TripPhoto src={it.hero.src} alt={it.hero.alt} caption={`${name} does ${uni.destination}`} />
+              <TripPhoto src={it.hero.src} alt={it.hero.alt} caption={`${name} does ${uni.destination}`} badge={it.badge} />
             </div>
           )}
           <div className="mt-12">
