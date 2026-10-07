@@ -1,14 +1,18 @@
-import { seedDemo } from "../src/lib/seed";
+import { seedDemo, syncTrips } from "../src/lib/seed";
 import { db } from "../src/lib/db";
 
 /**
- * Seeds demo data. Runs on every deploy, so it stops when the database already
- * has universities in it: a redeploy must never wipe entries people have made.
- * Set FORCE_SEED=1 to reseed on purpose.
+ * Runs on every deploy.
+ *
+ * An empty database gets the full demo data. A database that already has
+ * universities only gets its trips re-synced, so a redeploy updates where each
+ * uni is going without wiping entries people have made. FORCE_SEED=1 reseeds
+ * from scratch on purpose.
  */
 async function main() {
   if (process.env.FORCE_SEED !== "1" && (await db.university.count()) > 0) {
-    console.log("Database already seeded, leaving it alone.");
+    await syncTrips();
+    console.log("Already seeded. Trips re-synced, entries left alone.");
     return;
   }
   await seedDemo();

@@ -27,6 +27,52 @@ function rng(seed: number) {
   };
 }
 
+/**
+ * Each university's trip. Editable in Admin once it's running; this is only the
+ * starting point. `syncTrips` below re-applies it on every deploy, so changing
+ * a trip here updates the live site without touching anyone's entries.
+ */
+export const TRIPS: Record<string, {
+  destination: string;
+  route: string;
+  days: number;
+  departureDate: Date;
+  returnDate: Date;
+  pricePence: number;
+  softCap: number;
+  hardCap: number;
+}> = {
+  exeter: {
+    destination: "Cambodia",
+    route: "Phnom Penh,Siem Reap,Koh Rong,Koh Sdach",
+    days: 14,
+    departureDate: new Date("2027-06-20T00:00:00Z"),
+    returnDate: new Date("2027-07-03T00:00:00Z"),
+    pricePence: 36500,
+    softCap: 30,
+    hardCap: 40,
+  },
+  loughborough: {
+    destination: "Indonesia",
+    route: "Uluwatu,Nusa Lembongan,Gili Trawangan,Kuta Lombok",
+    days: 12,
+    // Indonesia departs on Saturdays.
+    departureDate: new Date("2027-06-26T00:00:00Z"),
+    returnDate: new Date("2027-07-08T00:00:00Z"),
+    pricePence: 36500,
+    softCap: 30,
+    hardCap: 40,
+  },
+};
+
+/** Re-applies the trip above to each university, leaving entrants and bookings alone. */
+export async function syncTrips() {
+  for (const [slug, trip] of Object.entries(TRIPS)) {
+    const uni = await db.university.findUnique({ where: { slug } });
+    if (uni) await db.university.update({ where: { slug }, data: trip });
+  }
+}
+
 export async function seedDemo() {
   await db.payment.deleteMany();
   await db.booking.deleteMany();
@@ -38,16 +84,6 @@ export async function seedDemo() {
   await db.university.deleteMany();
   await db.outboxEmail.deleteMany();
 
-  const trip = {
-    destination: "Cambodia",
-    route: "Phnom Penh,Siem Reap,Koh Rong,Koh Sdach",
-    days: 14,
-    departureDate: new Date("2027-06-20T00:00:00Z"),
-    returnDate: new Date("2027-07-03T00:00:00Z"),
-    pricePence: 36500,
-    softCap: 30,
-    hardCap: 40,
-  };
 
   // people: giveaway sign-ups. The last `pending` are still verifying. tripOnly: booked without entering.
   const unis = [
@@ -72,7 +108,7 @@ export async function seedDemo() {
   for (const u of unis) {
     const rand = rng(u.seed);
     const pick = <T,>(xs: readonly T[]) => xs[Math.floor(rand() * xs.length)];
-    const uni = await db.university.create({ data: { name: u.name, slug: u.slug, ...trip } });
+    const uni = await db.university.create({ data: { name: u.name, slug: u.slug, ...TRIPS[u.slug] } });
 
     const people = [];
     for (let i = 0; i < u.people; i++) {

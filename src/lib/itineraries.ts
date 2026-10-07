@@ -88,6 +88,59 @@ export const ITINERARIES: Record<string, Itinerary> = {
     ],
     source: "https://madmonkeyhostels.com/all-in-trips/cambodia",
   },
+
+  Indonesia: {
+    tripCode: "IND",
+    // The boat party leads: it's what sells a uni trip.
+    hero: { src: `${CDN}/tours/PSX1UK/1780404760900-3.JPG`, alt: "The Mad Monkey boat party off Gili Trawangan, everyone piled on the deck" },
+    pitch:
+      "Boat party off Gili T, a foam party with a live DJ, then three days of surf camp in Lombok. Manta rays, island hopping round Nusa Penida and a sunrise hike up Mt Batur in between, for the mornings you want more than a hangover.",
+    vibe: "High energy and social",
+    physical: "Light to moderate. Some hangovers, some hikes.",
+    stops: [
+      { name: "Uluwatu", nights: 2 },
+      { name: "Nusa Lembongan", nights: 3 },
+      { name: "Gili Trawangan", nights: 3 },
+      { name: "Kuta Lombok", nights: 4 },
+    ],
+    // Order matters: this is a uni trip, so the nights out lead and the
+    // sunrises and snorkelling sit behind them.
+    highlights: [
+      { name: "Mad Monkey boat party", photo: `${CDN}/tours/PSX1UK/1780404760291-2.jpg` },
+      { name: "Foam party with a live DJ", photo: `${ASSETS}/hl-foam-party-Dj1CtWwE.jpg` },
+      { name: "Three-day surf camp", photo: `${ASSETS}/hl-surf-camp-GxUsBC-o.jpg` },
+      { name: "Island hopping, Nusa Penida", photo: `${ASSETS}/hl-nusa-penida-CfIETXkg.jpg` },
+      { name: "Snorkelling with manta rays", photo: `${ASSETS}/hl-snorkeling-Bwm7Bfwr.jpg` },
+      { name: "Mt Batur at sunrise", photo: `${ASSETS}/hl-mt-batur-DISzDskn.jpg` },
+      { name: "Mexican family dinner", photo: `${ASSETS}/i7-hl-mexican-DwQ8o51y.jpg` },
+    ],
+    included: [
+      "Dorm beds at Mad Monkey, every night",
+      "All transfers, fast boats between the islands and the airport shuttle",
+      "Every activity on the plan, the three-day surf camp included",
+      "4 breakfasts, 5 lunches and 5 dinners",
+      "Lots of free drinks",
+      "24/7 local crew",
+      "Free pre-night: arrive the night before, it's on us",
+    ],
+    notIncluded: ["Flights", "Travel insurance", "Extra food, drink and spending money", "Upgrades and add-ons"],
+    days: [
+      { day: 1, place: "Uluwatu", line: "Land at Denpasar and get to Mad Monkey Uluwatu. Welcome sunset session at Panorama Point.", included: ["Welcome sunset at Panorama Point"], meals: ["Welcome drink"] },
+      { day: 2, place: "Uluwatu", line: "Very early start for the Mt Batur sunrise trek. Recover in the sauna, hot tub and ice bath, then family dinner.", included: ["Mt Batur sunrise trek", "Sauna, hot tub & ice bath"], meals: ["Family dinner + 2 drinks"] },
+      { day: 3, place: "Uluwatu → Nusa Lembongan", line: "Taxi to Sanur, then a 30-minute fast boat to the island. Pool, gym, sauna and ice baths when you land.", transport: "Taxi & fast boat to Nusa Lembongan", included: ["Pool, gym, sauna & ice baths"] },
+      { day: 4, place: "Nusa Lembongan", line: "Out early to snorkel with manta rays off Nusa Penida. Afternoon on the beach or in a hammock, then family dinner.", included: ["Manta ray snorkelling"], meals: ["Family dinner"] },
+      { day: 5, place: "Nusa Penida", line: "Full day island hopping round the cliffs of Nusa Penida, 8:30 to 5. Karaoke night back at the hostel.", included: ["Nusa Penida island hopping", "Karaoke night"] },
+      { day: 6, place: "Nusa Lembongan → Gili Trawangan", line: "Early fast boat to Gili T, the island with no cars. Mexican family dinner and drinks.", transport: "Fast boat to Gili Trawangan", meals: ["Mexican family dinner + 2 drinks"] },
+      { day: 7, place: "Gili Trawangan", line: "Chill morning, explore the island at your own pace. Then the foam party with a live DJ.", included: ["Foam party with live DJ"] },
+      { day: 8, place: "Gili Trawangan", line: "The Mad Monkey boat party, 2 till 6. Swim, dance, stay out on the water. Unlimited BBQ and drinks after.", included: ["Mad Monkey boat party"], meals: ["Unlimited BBQ & drinks"] },
+      { day: 9, place: "Gili Trawangan → Kuta Lombok", line: "Monkey See, Monkey Do snorkelling trip, then a boat and shuttle over to Lombok.", transport: "Boat & shuttle to Kuta Lombok", included: ["Monkey See, Monkey Do snorkelling"] },
+      { day: 10, place: "Kuta Lombok", line: "Surf camp starts. Breakfast, then in the water by 9. Lunch, video analysis of your form, another session, hostel night.", included: ["Surf camp day 1"], meals: ["Breakfast, family dinner + 2 drinks"] },
+      { day: 11, place: "Kuta Lombok", line: "Surf camp day two. A different beach depending on the swell, same rhythm.", included: ["Surf camp day 2"], meals: ["Breakfast, family dinner + 2 drinks"] },
+      { day: 12, place: "Kuta Lombok", line: "Last surf camp day. One more session, one last night with the crew.", included: ["Surf camp day 3"], meals: ["Breakfast, family dinner + 2 drinks"] },
+      { day: 13, place: "Kuta Lombok → home", line: "A 30-minute shuttle to Lombok airport for your flight home.", transport: "Shuttle to Lombok Airport" },
+    ],
+    source: "https://madmonkeyhostels.com/all-in-trips/indonesia",
+  },
 };
 
 /** Every itinerary we hold, for the picker in Admin → Universities. */
