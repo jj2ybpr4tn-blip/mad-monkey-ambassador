@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { finalBalanceDate } from "./dates";
-import { DEPOSIT_PENCE, gbp, gbpCeil } from "./money";
+import { DEPOSIT_PENCE, gbp } from "./money";
 import { buildSchedule } from "./plans";
 import { displayName } from "./site";
 
@@ -19,11 +19,11 @@ export function weeklyPrice(uni: { pricePence: number; departureDate: Date }, fr
   return {
     pence,
     weeks: schedule.length,
-    // Under a tenner the pence are the whole point; above it we round up so the
-    // headline never promises less than they'll actually pay.
-    label: underATenner ? gbp(pence, { exact: true }) : gbpCeil(pence),
+    // Always the exact amount, so the headline, the pay block and the plan
+    // picker can never disagree with each other.
+    label: gbp(pence, { exact: true }),
     // The headline version. Drops back to the real figure once it's over £10.
-    hook: underATenner ? "less than £10 a week" : `${gbpCeil(pence)} a week`,
+    hook: underATenner ? "less than £10 a week" : `${gbp(pence, { exact: true })} a week`,
     underATenner,
   };
 }

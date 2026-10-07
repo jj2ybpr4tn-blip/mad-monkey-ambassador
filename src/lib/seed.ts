@@ -59,7 +59,9 @@ export const TRIPS: Record<string, {
     // Indonesia departs on Saturdays.
     departureDate: new Date("2027-06-26T00:00:00Z"),
     returnDate: new Date("2027-07-08T00:00:00Z"),
-    pricePence: 36500,
+    // Indonesia lists at $650 against Cambodia's $600. Held to the same share
+    // of list price as Cambodia's £365, that's £395.
+    pricePence: 39500,
     softCap: 30,
     hardCap: 40,
   },
